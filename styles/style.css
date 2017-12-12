@@ -1,0 +1,22 @@
+.map {
+  z-index: 1000000;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0; 
+  background-color: #999;
+}
+
+.map_cell {
+  outline: 1px solid #CCC;
+  height: 50px;
+  background-color: #FFF;
+}
+
+.player {
+  z-index: 1000001;
+  position: absolute;
+  height: 50px;
+  width: 50px;
+  background-color: #FFF;
+}
