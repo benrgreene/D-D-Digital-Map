@@ -11,8 +11,8 @@
 include 'includes/class-brg-tile-parts.php';
 include 'includes/class-brg-map-file-parser.php';
 
-$nonce_name   = 'brg-campaign-nonce';
-$nonce_action = 'brg-campaign-add-file';
+$nonce_name     = 'brg-campaign-nonce';
+$nonce_action   = 'brg-campaign-add-file';
 
 /** Register the campaign post type for the plugin: */
 add_action( 'init', 'brg_create_campaign_cpt' );
@@ -69,28 +69,31 @@ function brg_save_map_file( $id ) {
 
   // Check if the file was succesfully uploaded
   if( isset( $upload['error'] ) && 0 != $upload['error'] ) {
-    error_log('dying');
     wp_die( 'There was a nuclear catastrophe uploading your file. Soz m8.' );
   } else {
-    error_log($id);
     add_post_meta( $id, 'campaign_map_file', $upload );
     update_post_meta( $id, 'campaign_map_file', $upload );     
   }
 }
 
+add_action('post_edit_form_tag', 'update_edit_form');
 function update_edit_form() {
   echo ' enctype="multipart/form-data"';
 } 
-add_action('post_edit_form_tag', 'update_edit_form');
-
 
 /** Enqueue styles (in case we need them) */ 
 add_action( 'wp_enqueue_scripts', 'brg_add_map_styling' );
 function brg_add_map_styling() {
+  global $base_image_dir;
+
   if( is_single() || 'brg-dnd-campaign' == get_post_type() ) {
     wp_enqueue_style( 'map-base-style', plugins_url() . '/ben-dnd/styles/style.css' );
 
     wp_enqueue_script( 'map-script', plugins_url() . '/ben-dnd/js/players.js' );
+
+    wp_localize_script( 'map-script', 'dnd_info', array(
+      'image_path' => $base_image_dir,
+    ) );
   }
 }
 

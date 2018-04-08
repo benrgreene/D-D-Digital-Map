@@ -40,12 +40,14 @@ class MapFileParser {
       
       return array(
         'text'  => $cell_info,
-        'color' => $this->tile_parts::$types[$key]['color'],
+        'color' => $this->tile_parts->types[$key]['color'],
+        'type'  => $key,
       );
     }
     return array(
       'text'  => '&nbsp;',
-      'color' => $this->tile_parts::$types['default']['color'],
+      'color' => $this->tile_parts->types['default']['color'],
+      'type'  => 'default',
     );
   }
   
