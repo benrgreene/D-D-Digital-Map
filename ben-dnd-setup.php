@@ -11,7 +11,9 @@
 include 'includes/class-brg-tile-parts.php';
 include 'includes/class-brg-map-file-parser.php';
 include 'includes/class-brg-meta-data-setup.php';
+include 'includes/class-brg-dnd-endpoints.php';
 
+BRG_DND_Endpoints::get_instance();
 BRG_DND_Meta_Setup::get_instance();
 
 /** Register the campaign post type for the plugin: */
