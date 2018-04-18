@@ -12,12 +12,17 @@ include 'includes/class-brg-tile-parts.php';
 include 'includes/class-brg-map-file-parser.php';
 include 'includes/class-brg-meta-data-setup.php';
 include 'includes/class-brg-dnd-endpoints.php';
+include 'includes/class-database.php';
 
 BRG_DND_Endpoints::get_instance();
 BRG_DND_Meta_Setup::get_instance();
+BRG_DND_Database::get_instance();
+
+add_action( 'init', 'brg_create_campaign_cpt' );
+add_action( 'wp_enqueue_scripts', 'brg_add_map_styling' );
+add_filter( 'the_content', 'brg_display_map_single' );
 
 /** Register the campaign post type for the plugin: */
-add_action( 'init', 'brg_create_campaign_cpt' );
 function brg_create_campaign_cpt() {
   register_post_type( 'brg-dnd-campaign', array(
     'labels'      => array(
@@ -32,9 +37,7 @@ function brg_create_campaign_cpt() {
   ) );
 }
 
-
 /** Enqueue styles (in case we need them) */ 
-add_action( 'wp_enqueue_scripts', 'brg_add_map_styling' );
 function brg_add_map_styling() {
   global $base_image_dir;
 
@@ -43,14 +46,18 @@ function brg_add_map_styling() {
 
     wp_enqueue_script( 'map-script', plugins_url() . '/ben-dnd/js/players.js' );
 
+    $map_id    = get_the_id();
+    $dm_id     = get_current_user_id();
     wp_localize_script( 'map-script', 'dnd_info', array(
-      'image_path' => $base_image_dir,
+      'image_path' => BRGMapTileParts::get_instance()->base_image_dir,
+      'endpoint'   => site_url() . '/wp-json/dnd/save-game',
+      'map_id'     => $map_id,
+      'dm_id'      => $dm_id,
     ) );
   }
 }
 
 /** Display the map in place of the content */
-add_filter( 'the_content', 'brg_display_map_single' );
 function brg_display_map_single( $content ) {
   if( ! is_single() || 'brg-dnd-campaign' !== get_post_type() ) {
     return $content;

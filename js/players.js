@@ -6,7 +6,6 @@ let map_cells;
 // Add listener for adding players to the board
 document.addEventListener( 'keydown', function( event ) {
   const key_id = event.keyCode;
-  console.log(key_id);
   if( 13 == key_id ) {
     add_player();
   }
@@ -48,6 +47,7 @@ function set_player_to_move( event ) {
 function update_player_position( cell_clicked  ) {
   let cell_position = get_cell_position( cell_clicked );
   move_player( cell_position );
+  save_game();
 }
 
 // When a cell is clicked, get its location
@@ -69,4 +69,31 @@ function move_player( location ) {
 // remove player from the board
 function delete_player() {
   player_listener.parentNode.removeChild( player_listener );
+}
+
+/**
+ * Save the game state
+ */
+function save_game() {
+  var campaign_data = gather_campaign_data();
+  fetch( dnd_info.endpoint, {
+    method: 'post',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8'
+    },
+    body: JSON.stringify({
+      action: 'dnd_save_game',
+      map_id: dnd_info.map_id,
+      dm_id: dnd_info.dm_id,
+      map_data: campaign_data
+    }),
+  }).then(function(response) {
+    return response.json();
+  }).then(function(data) {
+    console.log(data);
+  });
+}
+
+function gather_campaign_data() {
+  return '{"asdf": "testoiqubovyer 2 3"}';
 }
