@@ -85,7 +85,7 @@ function save_game() {
       action: 'dnd_save_game',
       map_id: dnd_info.map_id,
       dm_id: dnd_info.dm_id,
-      map_data: campaign_data
+      map_data: campaign_data,
     }),
   }).then(function(response) {
     return response.json();

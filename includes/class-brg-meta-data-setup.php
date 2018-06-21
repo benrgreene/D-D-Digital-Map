@@ -51,6 +51,10 @@ class BRG_DND_Meta_Setup {
 
     // Get upload info - attempt the upload
     $attachment = $_FILES['campaign_map_file'];
+    if( empty( $attachment['tmp_name'] ) ) {
+      return;
+    }
+
     $upload = wp_upload_bits( $attachment['name'], null, file_get_contents( $attachment['tmp_name'] ) );
 
     // Check if the file was succesfully uploaded
