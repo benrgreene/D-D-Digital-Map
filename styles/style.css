@@ -8,9 +8,21 @@
 }
 
 .map_cell {
+  position: relative;
   outline: 1px solid #CCC;
   height: 50px;
   background-color: #FFF;
+}
+
+.map_cell:hover::after {
+  content: '';
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(100, 100, 100, 0.6);
 }
 
 .player {
@@ -18,5 +30,20 @@
   position: absolute;
   height: 50px;
   width: 50px;
+  line-height: 50px;
+  text-align: center;
   background-color: #FFF;
+  cursor: pointer;
+}
+
+.current-player {
+  animation-name: flash;
+  animation-duration: 2s; 
+  animation-iteration-count: infinite;
+}
+
+@keyframes flash {
+  0% { background-color: white; }
+  50% { background-color: red; }
+  100% { background-color: white; }
 }

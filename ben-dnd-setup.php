@@ -50,7 +50,7 @@ function brg_add_map_styling() {
     $dm_id     = get_current_user_id();
     wp_localize_script( 'map-script', 'dnd_info', array(
       'image_path' => BRGMapTileParts::get_instance()->base_image_dir,
-      'endpoint'   => site_url() . '/wp-json/dnd/save-game',
+      'endpoint'   => site_url() . '/wp-json/dnd/',
       'map_id'     => $map_id,
       'dm_id'      => $dm_id,
     ) );
