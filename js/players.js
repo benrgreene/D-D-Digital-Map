@@ -4,8 +4,20 @@ let player_listener;
 // All the map cells
 let map_cells;
 
+// General map setup
+map_cells = document.querySelectorAll( '.map_cell' );
+map_cells.forEach( function( cell ) {
+  cell.addEventListener( 'click', update_player_position );
+});
+loadPlayers();
+
+// Listeners for the admin control buttons
+const add_player_button = document.querySelector('#js-add-player');
+add_player_button.addEventListener('click', function( event ) {
+  add_player();
+});
+
 // Add listener for adding players to the board
-// TODO: these should also have visible buttons
 document.addEventListener( 'keydown', function( event ) {
   const key_id = event.keyCode;
   if( 13 == key_id ) {
@@ -14,15 +26,6 @@ document.addEventListener( 'keydown', function( event ) {
   else if( 8 == key_id ) {
     delete_player();
   }
-});
-
-// Listeners for the map cells (used for moving the player)
-document.addEventListener( 'DOMContentLoaded', function( event ) {
-  map_cells = document.querySelectorAll( '.map_cell' );
-  map_cells.forEach( function( cell ) {
-    cell.addEventListener( 'click', update_player_position );
-  });
-  loadPlayers();
 });
 
 /**
@@ -42,12 +45,12 @@ function loadPlayers() {
     // key is the player name, data[key] is the position data
     Object.keys(data).map( function( key ) {
       var left_pos = data[key].left / 50;
-      var top_pos  = data[key].top / 50;
+      var top_pos  = ((data[key].top - 100) / 50);
       add_player(key, { 'x': left_pos, 'y': top_pos });
     });
 
     if( false == data ) {
-      alert( 'There was an issue saving the game! Please check your connection.' );
+      alert( 'There was an issue loading the game! Please check your connection.' );
     }
   });
 }
@@ -104,7 +107,7 @@ function get_cell_position( event ) {
 
 // Move the player to new position
 function move_player( location ) { 
-  player_listener.style.top  = location.y * 50 + 'px';
+  player_listener.style.top  = (location.y * 50 + 100) + 'px';
   player_listener.style.left = location.x * 50 + 'px';
 }
 

@@ -44,7 +44,7 @@ function brg_add_map_styling() {
   if( is_single() || 'brg-dnd-campaign' == get_post_type() ) {
     wp_enqueue_style( 'map-base-style', plugins_url() . '/ben-dnd/styles/style.css' );
 
-    wp_enqueue_script( 'map-script', plugins_url() . '/ben-dnd/js/players.js' );
+    wp_enqueue_script( 'map-script', plugins_url() . '/ben-dnd/js/players.js', array('jquery'), '1', true );
 
     $map_id    = get_the_id();
     $dm_id     = get_current_user_id();
