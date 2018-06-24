@@ -4,17 +4,29 @@ let player_listener;
 // All the map cells
 let map_cells;
 
-// General map setup
+/**
+ * ------------------------------------------------------
+ * General map setup
+ * ------------------------------------------------------
+ */
 map_cells = document.querySelectorAll( '.map_cell' );
 map_cells.forEach( function( cell ) {
   cell.addEventListener( 'click', update_player_position );
 });
 loadPlayers();
 
-// Listeners for the admin control buttons
+/* ------------------------------------------------------
+ * Listeners for the admin control buttons
+ * ------------------------------------------------------
+ */
 const add_player_button = document.querySelector('#js-add-player');
 add_player_button.addEventListener('click', function( event ) {
   add_player();
+});
+
+const delete_player_button = document.querySelector('#js-delete-player');
+delete_player_button.addEventListener('click', function( event ) {
+  delete_player();
 });
 
 // Add listener for adding players to the board
@@ -29,7 +41,9 @@ document.addEventListener( 'keydown', function( event ) {
 });
 
 /**
- * Attempt to load player data
+ * ------------------------------------------------------ 
+ * Loading/Saving functions
+ * ------------------------------------------------------
  */
 function loadPlayers() {
   fetch( dnd_info.endpoint + 'load-game?map_id=' + 
@@ -55,7 +69,59 @@ function loadPlayers() {
   });
 }
 
-// Add a player to the board
+/**
+ * Save the game state
+ */
+function save_game() {
+  var campaign_data = gather_campaign_data();
+  fetch( dnd_info.endpoint + 'save-game', {
+    method: 'post',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8'
+    },
+    body: JSON.stringify({
+      map_id: dnd_info.map_id,
+      dm_id: dnd_info.dm_id,
+      map_data: campaign_data,
+    }),
+  }).then(function(response) {
+    return response.json();
+  })
+  // Will return either true OR false (on failure)
+  .then(function(data) {
+    if( false == data ) {
+      alert( 'There was an issue saving the game! Please check your connection.' );
+    }
+  });
+}
+
+/**
+ * Want to gather all the player data (names + positions) to save. 
+ * Returns a stringified version of the JSON object
+ */
+function gather_campaign_data() {
+  // bail early if there are no players to save
+  if(0 == all_players.length) {
+    return false;
+  }
+
+  let players = {};
+  all_players.forEach( function( player ) {
+    let left = player.style.left.replace('px', '');
+    let top  = player.style.top.replace('px', '');
+    players[player.innerText] = {
+      'left': left,
+      'top': top
+    };
+  });
+  return JSON.stringify(players);
+}
+
+/* 
+ * ------------------------------------------------------
+ * Helpers
+ * ------------------------------------------------------
+ */
 function add_player(player_name=false, new_location=false) {
   reset_all_player_classes(); 
   // Need the player name first
@@ -113,33 +179,20 @@ function move_player( location ) {
 
 // remove player from the board
 function delete_player() {
-  player_listener.parentNode.removeChild( player_listener );
-}
+  if( player_listener ) {
+    // Remove player from the players list
+    player_name = player_listener.innerText;
+    all_players.forEach(function(player, index) {
+      if( player.innerText == player_name ) {
+        all_players.splice(index, 1);
+      }
+    });
 
-/**
- * Save the game state
- */
-function save_game() {
-  var campaign_data = gather_campaign_data();
-  fetch( dnd_info.endpoint + 'save-game', {
-    method: 'post',
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8'
-    },
-    body: JSON.stringify({
-      map_id: dnd_info.map_id,
-      dm_id: dnd_info.dm_id,
-      map_data: campaign_data,
-    }),
-  }).then(function(response) {
-    return response.json();
-  })
-  // Will return either true OR false (on failure)
-  .then(function(data) {
-    if( false == data ) {
-      alert( 'There was an issue saving the game! Please check your connection.' );
-    }
-  });
+    // Remove element & save game
+    player_listener.parentNode.removeChild( player_listener );
+    player_listener = false;
+    save_game();
+  }
 }
 
 // Reset all players to not have the 'current-player' class
@@ -147,26 +200,4 @@ function reset_all_player_classes() {
   all_players.forEach(function(player) {
     player.classList.remove('current-player');
   });
-}
-
-/**
- * Want to gather all the player data (names + positions) to save. 
- * Returns a stringified version of the JSON object
- */
-function gather_campaign_data() {
-  // bail early if there are no players to save
-  if(0 == all_players.length) {
-    return false;
-  }
-
-  let players = {};
-  all_players.forEach( function( player ) {
-    let left = player.style.left.replace('px', '');
-    let top  = player.style.top.replace('px', '');
-    players[player.innerText] = {
-      'left': left,
-      'top': top
-    };
-  });
-  return JSON.stringify(players);
 }
