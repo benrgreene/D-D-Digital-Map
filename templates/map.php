@@ -2,6 +2,10 @@
 <?php $tile_manager->the_tile_styles( count( $this->map_array ), count( $this->map_array[0] ) ); ?>
 
 <div class="map">
+  <div class="map--controls">
+    <button id="js-add-player">Add Player</button>
+    <button id="js-delete-player">Delete Player</button>
+  </div>
   <?php foreach( $this->map_array as $row_index => $row ): ?>
     <div class="map_row row-<?php echo $row_index; ?>">
       <?php foreach( $row as $col_index => $cell ): ?>

@@ -72,10 +72,14 @@ class BRGMapTileParts {
     .map {
       display: grid; 
       grid-template-columns: repeat(<?php echo $cols; ?>, 50px );
-      grid-template-rows: repeat(<?php echo $rows; ?>, 1fr );
+      grid-template-rows: 100px repeat(<?php echo $rows; ?>, 1fr );
     }
-    .map_cell {
-      background-size: cover;
+    .map--controls {
+      grid-column-start: 1;
+      grid-column-end: <?php echo $rows; ?>;
+      display: flex;
+      align-items: center;
+      background-color: #DDD;
     }
     <?php foreach( $this->types as $type => $info ): ?>
       .tile-type__<?php echo $type; ?> {
